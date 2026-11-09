@@ -10,137 +10,141 @@
     --text: #e8e6e1;
     --dim: #8d9097;
     --accent: #ff8a1f;
+    --rowh: 22px;   /* sequencer row height; fitRows() grows it to use spare screen height */
   }
   * { box-sizing: border-box; }
+  html, body { height: 100%; }
   body {
     margin: 0;
-    min-height: 100vh;
-    padding: 24px 14px;
+    padding: 10px;
     background: radial-gradient(circle at 50% 0%, #2a2c31, #0b0c0e 70%);
     color: var(--text);
     font-family: -apple-system, system-ui, "Helvetica Neue", Arial, sans-serif;
     -webkit-user-select: none; user-select: none;
   }
   .machine {
-    max-width: 1200px; margin: 0 auto;
+    max-width: 1440px; margin: 0 auto;
     background: linear-gradient(#2b2d32, #1c1e22);
-    border: 1px solid #000; border-radius: 14px;
+    border: 1px solid #000; border-radius: 12px;
     box-shadow: 0 24px 60px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.08);
-    padding: 18px 20px 20px;
+    padding: 10px 12px 12px;
   }
-  header { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
-  .brand { font-weight: 800; letter-spacing: .14em; font-size: 21px; }
+  .brand { font-weight: 800; letter-spacing: .14em; font-size: 19px; line-height: 1; }
   .brand span { color: var(--accent); }
-  .brand small { font-weight: 500; letter-spacing: .2em; font-size: 10px; color: var(--dim); margin-left: 10px; }
-  .hint { color: var(--dim); font-size: 12px; }
+  .hint { color: var(--dim); font-size: 11px; margin-top: 5px; white-space: nowrap; min-height: 13px; max-width: 150px; overflow: hidden; text-overflow: ellipsis; }
 
   .section {
-    background: var(--panel); border: 1px solid rgba(0,0,0,.6); border-radius: 10px;
-    padding: 12px 14px; margin-top: 12px; box-shadow: inset 0 1px 4px rgba(0,0,0,.5);
+    background: var(--panel); border: 1px solid rgba(0,0,0,.6); border-radius: 9px;
+    padding: 8px 10px; margin-top: 8px; box-shadow: inset 0 1px 4px rgba(0,0,0,.5);
   }
-  .label { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); display: block; margin-bottom: 6px; }
-  .controls { display: flex; flex-wrap: wrap; gap: 18px 22px; align-items: flex-end; }
+  .section:first-child { margin-top: 0; }
+  .label { font-size: 9px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); display: block; margin-bottom: 3px; white-space: nowrap; }
+  .controls { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: flex-end; }
   .ctl { display: flex; flex-direction: column; }
-  .row { display: flex; align-items: center; gap: 6px; }
+  .row { display: flex; align-items: center; gap: 5px; }
+  .spacer { flex: 1; }
 
   button {
-    font: inherit; font-size: 13px; color: var(--text);
+    font: inherit; font-size: 12px; color: var(--text);
     background: linear-gradient(#3b3e45, #2a2d32);
-    border: 1px solid #000; border-radius: 6px; padding: 7px 12px; cursor: pointer;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.1);
+    border: 1px solid #000; border-radius: 6px; padding: 6px 10px; cursor: pointer;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.1); white-space: nowrap;
   }
   button:hover { background: linear-gradient(#464951, #30333a); }
   button:active { transform: translateY(1px); }
   button:disabled { opacity: .35; cursor: default; transform: none; }
   button.on { background: linear-gradient(#ff9a3a, #de6a00); color: #1b0f00; }
-  #play { width: 96px; font-weight: 800; letter-spacing: .1em; padding: 10px 12px; }
+  #play { width: 84px; font-weight: 800; letter-spacing: .1em; padding: 7px 10px; }
+  #helpBtn { width: 22px; height: 20px; padding: 0; font-size: 11px; font-weight: 800; border-radius: 50%; }
 
   .lcd {
     background: #08160d; color: #7dffa0; text-shadow: 0 0 6px rgba(125,255,160,.55);
-    font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 22px; text-align: center;
-    border: 1px solid #000; border-radius: 5px; padding: 4px 6px; width: 76px;
+    font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 18px; text-align: center;
+    border: 1px solid #000; border-radius: 5px; padding: 3px 4px; width: 60px;
   }
   input[type=number] { -moz-appearance: textfield; appearance: textfield; }
   input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-  input[type=range] { accent-color: var(--accent); width: 120px; }
+  input[type=range] { accent-color: var(--accent); width: 90px; margin: 0; }
   select {
-    font: inherit; font-size: 13px; background: #121417; color: var(--text);
-    border: 1px solid #000; border-radius: 6px; padding: 7px 8px; min-width: 170px;
+    font: inherit; font-size: 12px; background: #121417; color: var(--text);
+    border: 1px solid #000; border-radius: 6px; padding: 5px 6px;
   }
-  .val { font-family: Menlo, monospace; font-size: 12px; color: var(--dim); min-width: 38px; }
+  .val { font-family: Menlo, monospace; font-size: 11px; color: var(--dim); min-width: 32px; }
 
   /* Pads */
-  .pads { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+  .pads { display: grid; grid-template-columns: repeat(12, 1fr); gap: 7px; }
   .pad {
-    position: relative; height: 86px; padding: 8px 10px; border-radius: 9px; border: 1px solid #000;
-    display: flex; align-items: flex-end; text-align: left; font-weight: 700; font-size: 13px;
+    position: relative; height: 54px; padding: 6px 8px; border-radius: 8px; border: 1px solid #000;
+    display: flex; align-items: flex-end; text-align: left; font-weight: 700; font-size: 12px;
+    white-space: normal; line-height: 1.15;
     background: linear-gradient(color-mix(in srgb, var(--c) 55%, #222), color-mix(in srgb, var(--c) 28%, #111));
     box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 3px 0 #000;
     transition: filter .1s, box-shadow .1s; touch-action: manipulation;
   }
   .pad:hover { background: linear-gradient(color-mix(in srgb, var(--c) 62%, #222), color-mix(in srgb, var(--c) 32%, #111)); }
   .pad .key {
-    position: absolute; top: 7px; right: 8px; font: 11px Menlo, monospace; opacity: .75;
-    border: 1px solid rgba(255,255,255,.35); border-radius: 3px; padding: 0 4px;
+    position: absolute; top: 5px; right: 6px; font: 10px Menlo, monospace; opacity: .75;
+    border: 1px solid rgba(255,255,255,.35); border-radius: 3px; padding: 0 3px;
   }
   .pad.hit { filter: brightness(1.8); box-shadow: 0 0 20px var(--c), inset 0 1px 0 rgba(255,255,255,.3); transition: none; }
 
   /* Sequencer */
-  .seq-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
-  .seq-wrap { overflow-x: auto; padding-bottom: 4px; }
-  .seq { min-width: max-content; }
-  .track { display: grid; grid-template-columns: 112px 28px 28px 72px auto; gap: 6px; align-items: center; margin: 4px 0; }
+  .seq-head { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 14px; margin-bottom: 6px; }
+  .seq-wrap { overflow-x: auto; }
+  .seq { min-width: 760px; }
+  .track { display: grid; grid-template-columns: 96px 24px 24px 64px 1fr; gap: 5px; align-items: center; margin: 2px 0; }
   .tname {
-    text-align: left; padding: 5px 8px; font-size: 12px; font-weight: 600;
-    border-left: 4px solid var(--c); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    text-align: left; padding: 3px 7px; font-size: 11px; font-weight: 600; height: var(--rowh);
+    border-left: 4px solid var(--c); overflow: hidden; text-overflow: ellipsis;
   }
   .tname.hit { background: color-mix(in srgb, var(--c) 45%, #2a2d32); }
-  .ms { padding: 4px 0; font-size: 11px; font-weight: 800; }
+  .ms { padding: 0; height: var(--rowh); font-size: 10px; font-weight: 800; }
   .ms.mute.on { background: #d0392b; color: #fff; }
   .ms.solo.on { background: #f2cb2c; color: #1a1400; }
-  .track input[type=range] { width: 72px; }
-  .steps { display: grid; grid-template-columns: repeat(var(--len), 24px); gap: 3px; }
+  .track input[type=range] { width: 64px; }
+  .steps { display: grid; grid-template-columns: repeat(var(--len), minmax(14px, 1fr)); gap: 3px; }
   .step {
-    height: 26px; border-radius: 4px; border: 1px solid #000; cursor: pointer; touch-action: none;
+    height: var(--rowh); border-radius: 4px; border: 1px solid #000; cursor: pointer; touch-action: none;
     background: #33363c; box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
   }
   .step.beat { background: #3f434a; }
-  .step.gs { margin-left: 6px; }
+  .step.gs { margin-left: 5px; }
   .step.on { background: color-mix(in srgb, var(--c) 62%, #1b1b1b); }
   .step.acc { background: var(--c); box-shadow: 0 0 8px color-mix(in srgb, var(--c) 70%, transparent), inset 0 1px 0 rgba(255,255,255,.4); }
   .step.now { outline: 2px solid rgba(255,255,255,.7); outline-offset: -1px; }
   .track.silent .steps, .track.silent .tname { opacity: .35; }
   .ledrow .led {
-    height: 16px; border-radius: 3px; background: #1a0d05; border: 1px solid #000;
+    height: 14px; border-radius: 3px; background: #1a0d05; border: 1px solid #000;
     font: 9px Menlo, monospace; color: #6b5a4c; display: flex; align-items: center; justify-content: center;
   }
   .ledrow .led.now { background: #ff7a00; color: #1a0d05; box-shadow: 0 0 10px #ff7a00; }
-  .ledspacer { grid-column: 1 / 5; font-size: 10px; letter-spacing: .14em; color: var(--dim); text-transform: uppercase; }
+  .ledspacer { grid-column: 1 / 5; font-size: 9px; letter-spacing: .14em; color: var(--dim); text-transform: uppercase; }
 
   /* Mode tabs */
   .tabs { display: flex; }
-  .tabs button { border-radius: 0; font-weight: 700; letter-spacing: .04em; }
+  .tabs button { border-radius: 0; font-weight: 700; letter-spacing: .03em; }
   .tabs button:first-child { border-radius: 6px 0 0 6px; }
   .tabs button:last-child { border-radius: 0 6px 6px 0; border-left: 0; }
 
-  /* Loop recorder */
-  .loopctl { display: none; flex-direction: column; gap: 12px; margin-bottom: 12px; }
-  .lrow { display: flex; flex-wrap: wrap; gap: 12px 22px; align-items: flex-end; }
+  /* Loop recorder controls sit beside the tabs, with small labels in front */
+  .loopctl { display: none; flex-wrap: wrap; gap: 6px 14px; align-items: center; flex: 1; }
+  .loopctl .grp { display: flex; align-items: center; gap: 5px; }
+  .loopctl .label { margin: 0; }
   #eraseBtn.on { background: linear-gradient(#5aa9ff, #2a6fd0); color: #fff; }
   .seq-section.loop .loopctl { display: flex; }
   .seq-section.loop .steps, .seq-section.loop #accentBtn { display: none; }
   .seq-section:not(.loop) .lane { display: none; }
   .lane {
-    position: relative; width: var(--lanew); height: 26px; overflow: hidden;
+    position: relative; height: var(--rowh); overflow: hidden;
     border: 1px solid #000; border-radius: 4px; cursor: crosshair; touch-action: none;
     background:
-      linear-gradient(to right, rgba(255,255,255,.30) 1px, transparent 1px) 0 0 / var(--barw) 100%,
-      linear-gradient(to right, rgba(255,255,255,.13) 1px, transparent 1px) 0 0 / var(--beatw) 100%,
-      linear-gradient(to right, rgba(255,255,255,.05) 1px, transparent 1px) 0 0 / var(--gridw) 100%,
+      linear-gradient(to right, rgba(255,255,255,.30) 1px, transparent 1px) 0 0 / calc(100% / var(--bars)) 100%,
+      linear-gradient(to right, rgba(255,255,255,.13) 1px, transparent 1px) 0 0 / calc(100% / var(--beats)) 100%,
+      linear-gradient(to right, rgba(255,255,255,.05) 1px, transparent 1px) 0 0 / calc(100% / var(--grids)) 100%,
       #24272c;
   }
-  .lane.ruler { height: 16px; cursor: default; background: #1a0d05; }
-  .lane.ruler span { position: absolute; top: 1px; margin-left: 4px; font: 9px Menlo, monospace; color: #a08670; }
+  .lane.ruler { height: 14px; cursor: default; background: #1a0d05; }
+  .lane.ruler span { position: absolute; top: 0; margin-left: 4px; font: 9px Menlo, monospace; color: #a08670; }
   .ev {
     position: absolute; top: 3px; bottom: 3px; width: 5px; margin-left: -2px; border-radius: 2px;
     background: var(--c); box-shadow: 0 0 6px var(--c); cursor: pointer;
@@ -153,30 +157,36 @@
   #recBtn.on { background: linear-gradient(#ff4b3e, #c0221a); color: #fff; animation: blink 1s steps(2) infinite; }
   @keyframes blink { 50% { filter: brightness(.7); } }
 
-  footer { margin-top: 12px; color: var(--dim); font-size: 12px; line-height: 1.6; }
+  /* Help */
+  dialog {
+    max-width: 640px; background: #202226; color: var(--text); border: 1px solid #000; border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.7); padding: 18px 22px; font-size: 13px; line-height: 1.6;
+  }
+  dialog::backdrop { background: rgba(0,0,0,.55); }
+  dialog h2 { margin: 0 0 8px; font-size: 16px; letter-spacing: .06em; }
+  dialog p { margin: 0 0 10px; }
   kbd { font: 11px Menlo, monospace; border: 1px solid #555; border-bottom-width: 2px; border-radius: 3px; padding: 0 4px; color: var(--text); }
 
-  @media (max-width: 760px) {
+  @media (max-width: 900px) {
+    .pads { grid-template-columns: repeat(6, 1fr); }
+  }
+  @media (max-width: 700px) {
     .pads { grid-template-columns: repeat(4, 1fr); }
-    .pad { height: 72px; }
+    .pad { height: 60px; }
     .pad .key { display: none; }
-    .machine { padding: 14px 12px; }
   }
 </style>
 </head>
 <body>
 <div class="machine">
-  <header>
-    <div class="brand">DM<span>-12</span><small>RHYTHM COMPOSER</small></div>
-    <div class="hint" id="status">Press Play or hit a pad to start</div>
-  </header>
 
-  <!-- Transport & global controls -->
+  <!-- Top strip: transport, tempo, pattern -->
   <div class="section controls">
     <div class="ctl">
-      <span class="label">Transport</span>
-      <button id="play" title="Space">▶ PLAY</button>
+      <div class="row" style="gap:10px"><div class="brand">DM<span>-12</span></div><button id="helpBtn" title="How to use">?</button></div>
+      <div class="hint" id="status">Press Play or hit a pad</div>
     </div>
+    <button id="play" title="Space">▶ PLAY</button>
     <div class="ctl">
       <span class="label">Tempo (BPM)</span>
       <div class="row">
@@ -193,61 +203,55 @@
     </div>
     <div class="ctl">
       <span class="label">Steps</span>
-      <select id="length" style="min-width:70px">
+      <select id="length">
         <option value="8">8</option><option value="16">16</option><option value="32">32</option>
       </select>
     </div>
     <div class="ctl">
-      <span class="label">Master Volume</span>
+      <span class="label">Volume</span>
       <div class="row"><input id="master" type="range" min="0" max="1" step="0.01"><span class="val" id="masterVal"></span></div>
     </div>
-  </div>
-
-  <!-- Pattern management -->
-  <div class="section controls">
     <div class="ctl">
       <span class="label">Pattern</span>
-      <select id="patternSel"></select>
-    </div>
-    <div class="ctl">
-      <span class="label">&nbsp;</span>
       <div class="row">
+        <select id="patternSel" style="width:160px"></select>
         <button id="saveBtn">Save…</button>
         <button id="deleteBtn">Delete</button>
-        <button id="clearBtn">Clear steps</button>
+        <button id="clearBtn" title="Clear all steps">Clear</button>
       </div>
     </div>
   </div>
 
   <!-- Pads -->
   <div class="section">
-    <span class="label">Pads</span>
     <div class="pads" id="pads"></div>
   </div>
 
-  <!-- Sequencer -->
+  <!-- Sequencer / loop recorder -->
   <div class="section seq-section" id="seqSection">
     <div class="seq-head">
       <div class="tabs">
         <button id="modeStep" class="on">Step Sequencer</button>
         <button id="modeLoop">Loop Recorder</button>
       </div>
-      <div class="row">
-        <button id="accentBtn" title="When on, clicked steps become accents (louder). Shift-click does the same.">Accent mode</button>
-      </div>
-    </div>
-    <div class="loopctl">
-      <div class="lrow">
-        <div class="ctl">
-          <span class="label">Loop length</span>
-          <select id="loopBars" style="min-width:90px">
+      <button id="accentBtn" title="When on, clicked steps become accents (louder). Shift-click does the same.">Accent mode</button>
+      <div class="loopctl">
+        <div class="grp">
+          <button id="recBtn" title="Record (Enter)">● REC</button>
+          <button id="countInBtn" title="Play one bar of clicks before recording starts">Count-in</button>
+          <button id="clickBtn" title="Metronome click">Click</button>
+          <button id="stepsUnderBtn" title="Play the step sequencer beat along with the loop">Step beat</button>
+        </div>
+        <div class="grp">
+          <span class="label">Length</span>
+          <select id="loopBars">
             <option value="1">1 bar</option><option value="2">2 bars</option>
             <option value="4">4 bars</option><option value="8">8 bars</option>
           </select>
         </div>
-        <div class="ctl">
+        <div class="grp">
           <span class="label">Quantise</span>
-          <select id="quant" style="min-width:120px">
+          <select id="quant">
             <option value="none">None</option>
             <option value="4">1/4</option>
             <option value="8">1/8</option>
@@ -256,64 +260,44 @@
             <option value="16t">1/16 triplet</option>
             <option value="32">1/32</option>
           </select>
+          <input id="strength" type="range" min="0" max="100" step="5" style="width:70px" title="Quantise strength: 100% snaps hits exactly to the grid; lower values only pull them part of the way">
+          <span class="val" id="strengthVal"></span>
+          <button id="requantBtn" title="Re-snap every hit in the loop using the current quantise and strength. Choose None to put hits back where you played them.">Apply</button>
         </div>
-        <div class="ctl">
-          <span class="label">Quantise strength</span>
-          <div class="row">
-            <input id="strength" type="range" min="0" max="100" step="5" title="100% snaps hits exactly to the grid; lower values only pull them part of the way">
-            <span class="val" id="strengthVal"></span>
-            <button id="requantBtn" title="Re-snap every hit in the loop using the current quantise and strength. Choose None to put hits back where you played them.">Apply to loop</button>
-          </div>
-        </div>
-        <div class="ctl">
-          <span class="label">Record mode</span>
-          <select id="recMode" style="min-width:130px" title="Replace: the first hit on a drum in each pass wipes that drum's older hits">
-            <option value="overdub">Overdub (add)</option>
+        <div class="grp">
+          <span class="label">Mode</span>
+          <select id="recMode" title="Replace: the first hit on a drum in each pass wipes that drum's older hits">
+            <option value="overdub">Overdub</option>
             <option value="replace">Replace</option>
           </select>
         </div>
-      </div>
-      <div class="lrow">
-        <div class="ctl">
-          <span class="label">Record</span>
-          <div class="row">
-            <button id="recBtn" title="Record (Enter)">● REC</button>
-            <button id="countInBtn" title="Play one bar of clicks before recording starts">Count-in</button>
-            <button id="clickBtn" title="Metronome click">Click</button>
-            <button id="stepsUnderBtn" title="Play the step sequencer beat along with the loop">Step beat</button>
-          </div>
+        <div class="grp">
+          <button id="undoBtn" title="Undo (Cmd/Ctrl+Z)">↶ Undo</button>
+          <button id="eraseBtn" title="Turn on, then hold a pad while the loop plays to wipe that drum's hits. Or hold Delete/Backspace with a pad key.">Erase</button>
+          <button id="clearLoopBtn" title="Remove every hit from the loop">Clear</button>
+          <button id="toStepsBtn" title="Copy this loop into the step sequencer (snapped to 16th notes)">→ Steps</button>
         </div>
-        <div class="ctl">
-          <span class="label">Edit</span>
-          <div class="row">
-            <button id="undoBtn" title="Undo (Cmd/Ctrl+Z)">↶ Undo</button>
-            <button id="eraseBtn" title="Turn on, then hold a pad while the loop plays to wipe that drum's hits. Or hold Delete/Backspace with a pad key.">Erase</button>
-            <button id="clearLoopBtn">Clear loop</button>
-            <button id="toStepsBtn" title="Copy this loop into the step sequencer (snapped to 16th notes)">→ Step sequencer</button>
-          </div>
-        </div>
-        <div class="ctl">
-          <span class="label">Saved loops</span>
-          <div class="row">
-            <select id="loopSel" style="min-width:150px"></select>
-            <button id="saveLoopBtn">Save loop…</button>
-            <button id="deleteLoopBtn">Delete</button>
-          </div>
+        <div class="grp">
+          <span class="label">Saved</span>
+          <select id="loopSel" style="width:140px"></select>
+          <button id="saveLoopBtn">Save…</button>
+          <button id="deleteLoopBtn">Delete</button>
         </div>
       </div>
     </div>
     <div class="seq-wrap"><div class="seq" id="seq"></div></div>
   </div>
-
-  <footer>
-    <b>Step Sequencer:</b> click a step to turn it on or off, or drag across a row to paint. <kbd>Shift</kbd>-click (or Accent mode) makes a louder accent step.<br>
-    <b>Loop Recorder:</b> pick a loop length and quantise, press REC (or <kbd>Enter</kbd>), then play the pads as the loop goes round. Overdub adds to the loop each pass; Replace swaps out a drum's old hits.
-    Click an empty spot in a lane to add a hit, or click a hit to remove it. <kbd>⌘/Ctrl</kbd>+<kbd>Z</kbd> undoes.
-    To erase while playing, hold <kbd>Delete</kbd> plus a pad key (or switch on Erase and hold a pad).<br>
-    Pad keys: <kbd>Q</kbd>–<kbd>Y</kbd> top row, <kbd>A</kbd>–<kbd>H</kbd> bottom row (hold <kbd>Shift</kbd> for a harder hit). <kbd>Space</kbd> starts/stops.
-    Click a track name to hear it. <b>M</b> mutes a track, <b>S</b> solos it. Your current beat and loop are kept automatically.
-  </footer>
 </div>
+
+<dialog id="help">
+  <h2>How to use the DM-12</h2>
+  <p><b>Pads:</b> click or tap them, or use the keys <kbd>Q</kbd>–<kbd>Y</kbd> (top row) and <kbd>A</kbd>–<kbd>H</kbd> (bottom row). Hold <kbd>Shift</kbd> for a harder hit. <kbd>Space</kbd> starts and stops.</p>
+  <p><b>Step Sequencer:</b> click a step to turn it on or off, or drag across a row to paint. <kbd>Shift</kbd>-click (or Accent mode) makes a louder accent step. Click a track name to hear it. <b>M</b> mutes a track, <b>S</b> solos it.</p>
+  <p><b>Loop Recorder:</b> pick a length and quantise, press REC (or <kbd>Enter</kbd>), then play the pads as the loop goes round. Overdub adds hits each pass; Replace swaps out a drum's old hits. The slider next to Quantise sets its strength, and Apply re-snaps the whole loop.
+  Click an empty spot in a lane to add a hit, or click a hit to remove it. <kbd>⌘/Ctrl</kbd>+<kbd>Z</kbd> undoes. To erase while playing, hold <kbd>Delete</kbd> plus a pad key (or switch on Erase and hold a pad).</p>
+  <p>Your current beat and loop are kept automatically. Use Save… to keep copies by name.</p>
+  <form method="dialog" style="text-align:right"><button>Close</button></form>
+</dialog>
 
 <script>
 // ---------- Instruments ----------
@@ -856,7 +840,7 @@ function buildSeq() {
   const leds = el('div', 'steps');
   for (let i = 0; i < state.length; i++) {
     const l = el('div', 'led' + (i % 4 === 0 && i ? ' gs' : ''), i % 4 === 0 ? String(i / 4 + 1) : '');
-    if (i % 4 === 0 && i) l.style.marginLeft = '6px';
+    if (i % 4 === 0 && i) l.style.marginLeft = '5px';
     leds.append(l);
     ledEls.push(l);
   }
@@ -933,13 +917,11 @@ function showPlayhead(step) {
 }
 
 // ---------- Loop lanes ----------
-const LANE_W = 880;
 function renderLanes() {
-  const seq = $('seq'), bar = LANE_W / loop.bars, beat = bar / 4;
-  seq.style.setProperty('--lanew', LANE_W + 'px');
-  seq.style.setProperty('--barw', bar + 'px');
-  seq.style.setProperty('--beatw', beat + 'px');
-  seq.style.setProperty('--gridw', beat * (QUANT[loop.quant] || 0.25) + 'px');
+  const seq = $('seq'), beats = loop.bars * 4;
+  seq.style.setProperty('--bars', loop.bars);
+  seq.style.setProperty('--beats', beats);
+  seq.style.setProperty('--grids', beats / (QUANT[loop.quant] || 0.25));
   phEls = [];
   const r = lanes.ruler;
   r.innerHTML = '';
@@ -1213,6 +1195,7 @@ function setMode(m) {
   if (isPlaying && m !== mode) stop();
   mode = m;
   $('seqSection').classList.toggle('loop', m === 'loop');
+  fitRows();
   $('modeStep').classList.toggle('on', m === 'step');
   $('modeLoop').classList.toggle('on', m === 'loop');
   saveLoop();
@@ -1362,6 +1345,21 @@ $('deleteLoopBtn').onclick = () => {
   setStatus(`Deleted loop "${name}"`);
 };
 
+$('helpBtn').onclick = () => $('help').showModal();
+
+// Size the sequencer rows so the whole machine fits the window without scrolling.
+const MIN_ROW = 18, MAX_ROW = 32;
+function fitRows() {
+  const root = document.documentElement;
+  root.style.setProperty('--rowh', MIN_ROW + 'px');
+  const bottom = document.querySelector('.machine').getBoundingClientRect().bottom + window.scrollY + 10;
+  const spare = window.innerHeight - bottom;
+  const rows = TRACKS.length + 1;
+  const h = Math.max(MIN_ROW, Math.min(MAX_ROW, Math.floor(MIN_ROW + spare / rows)));
+  root.style.setProperty('--rowh', h + 'px');
+}
+window.addEventListener('resize', fitRows);
+
 // ---------- Keyboard ----------
 const KEYMAP = Object.fromEntries(TRACKS.map(t => [t.key, t.id]));
 function isTyping(e) {
@@ -1369,7 +1367,7 @@ function isTyping(e) {
   return tag === 'SELECT' || (tag === 'INPUT' && e.target.type === 'number');
 }
 document.addEventListener('keydown', e => {
-  if (isTyping(e)) return;
+  if (isTyping(e) || $('help').open) return;
   if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z' && mode === 'loop') {
     e.preventDefault();
     undo();
